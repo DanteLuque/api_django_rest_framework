@@ -16,11 +16,27 @@ def inmuebles_list(req):
     return Response(serializer.data)
 
 
+
 @api_view()
 def inmuebles_detail(req, id):
     inmueble = get_object_or_404(Inmueble, pk=id) # este shorcut hace lo mismo que el try/except pero aqui el msg es generico
     serializer = InmuebleSerializer(inmueble)
     return Response(serializer.data)
+
+'''
+# Asi es como se ve sin el shortcut
+@api_view()
+def inmuebles_detail(req, id):
+    try:
+        inmueble = Inmueble.objects.get(pk=id)
+        serializer = InmuebleSerializer(inmueble)
+        return Response(serializer.data)
+    except Inmueble.DoesNotExist:
+        return Response(
+            {"error": "Inmueble no encontrado"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+'''
 
 
 @api_view(['POST'])

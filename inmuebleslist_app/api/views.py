@@ -1,5 +1,5 @@
-from django.db import IntegrityError
-from django.shortcuts import get_object_or_404
+#from django.db import IntegrityError
+#from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 #from rest_framework.decorators import api_view
@@ -31,7 +31,7 @@ class InmuebleList(APIView):
 
 
 class InmuebleDetail(APIView):
-    def get_object_by_pk(self, pk):
+    def get_object_by_pk(self, pk): #funcion personalizada, esto no le pertenece a APIView
         try:
             return Inmueble.objects.get(pk=pk)
         except Inmueble.DoesNotExist:
@@ -55,7 +55,7 @@ class InmuebleDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        inmueble = self.get_object(pk)
+        inmueble = self.get_object_by_pk(pk)
         if not inmueble:
             return Response({"error": "No encontrado"}, status=status.HTTP_404_NOT_FOUND)
         inmueble.delete()

@@ -19,6 +19,9 @@ def positiveValue(value):
         raise serializers.ValidationError("El valor debe ser mayor a cero")
 
 class InmuebleSerializer(serializers.Serializer):
+    # Campos calculados (obteniendo la longitud de direccion)
+    longitud_direccion = serializers.SerializerMethodField()
+    
     id = serializers.IntegerField(read_only=True)
     direccion = serializers.CharField(validators=[min_length(3), max_length(255)])
     pais = serializers.CharField(validators=[min_length(3), max_length(70)])
@@ -26,6 +29,10 @@ class InmuebleSerializer(serializers.Serializer):
     precio = serializers.FloatField(validators=[positiveValue])
     imagen = serializers.CharField()
     active = serializers.BooleanField()
+    
+    def get_longitud_direccion(self, object):
+        cantidad_caracteres = len(object.direccion)
+        return cantidad_caracteres
     
     def create(self, validated_data):
         return Inmueble.objects.create(**validated_data) #desempaquetamos todo el diccionario y se lo pasamos al create
@@ -59,6 +66,7 @@ class InmuebleSerializer(serializers.Serializer):
 # 
 # Al usar el ModelSerializer aplicas el principio DRY (Don't Repeat Yourself) que significa "no te repitas" es util, pero solo si
 # la logica a manejar no es compleja
+# En los ModelSerializer ya no es necesario los metodos create y update
 
 from rest_framework import serializers
 from inmuebleslist_app.models import Inmueble
@@ -66,6 +74,8 @@ from inmuebleslist_app.models import Inmueble
 class InmuebleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inmueble
+        # fields = "__all__" #esto es para mapear todos los campos, ya no habria necesidad de especificar todos
+        # exclude = ['id'] # mapea todos los campos excepto los que vamos a excluir
         fields = ['id', 'direccion', 'pais', 'descripcion', 'imagen', 'active']
         read_only_fields = ['id']
 """

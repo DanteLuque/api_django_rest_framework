@@ -1,10 +1,11 @@
 from django.urls import path
-from inmuebleslist_app.api.views import InmuebleList, InmuebleDetail
+from inmuebleslist_app.api.views import EdificacionList, EdificacionDetail, EmpresaAVList
 #from inmuebleslist_app.api.api import inmuebles_list, inmuebles_detail, add_inmueble, edit_inmueble, delete_inmueble
 
 urlpatterns = [
-    path("", InmuebleList.as_view(), name="inmueble-list"),
-    path("<int:pk>/", InmuebleDetail.as_view(), name="inmueble-detail"),
+    path("", EdificacionList.as_view(), name="edificacion"),
+    path("<int:pk>/", EdificacionDetail.as_view(), name="edificacion-detail"),
+    path("empresa/", EmpresaAVList.as_view(), name='empresa'),
 ]
 
 

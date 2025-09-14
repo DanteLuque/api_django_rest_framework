@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from inmuebleslist_app.models import Inmueble
+from inmuebleslist_app.models import Edificacion, Empresa
 
 # Metodos personalizados para validacion
 def min_length(min_len):
@@ -18,7 +18,7 @@ def positiveValue(value):
     if value <= 0:
         raise serializers.ValidationError("El valor debe ser mayor a cero")
 
-class InmuebleSerializer(serializers.Serializer):
+class EdificacionSerializer(serializers.Serializer):
     # Campos calculados (obteniendo la longitud de direccion)
     longitud_direccion = serializers.SerializerMethodField()
     
@@ -35,7 +35,7 @@ class InmuebleSerializer(serializers.Serializer):
         return cantidad_caracteres
     
     def create(self, validated_data):
-        return Inmueble.objects.create(**validated_data) #desempaquetamos todo el diccionario y se lo pasamos al create
+        return Edificacion.objects.create(**validated_data) #desempaquetamos todo el diccionario y se lo pasamos al create
     
     def update(self, instancia ,validated_data):
         instancia.direccion = validated_data.get('direccion', instancia.direccion)
@@ -58,6 +58,11 @@ class InmuebleSerializer(serializers.Serializer):
     def validate_empty_values(self, data):  
         return super().validate_empty_values(data)
     
+class EmpresaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Empresa
+        fields = "__all__"
+
 """
 # DRF nos ofrece algo llamado ModelSerializer que te permite simplificar el mapeo de los campos, seteo de campos para auditoria,
 # el manejo de las funciones create y update, etc. Es recomedable usar esto si el mapeo de los campos va dirigido a un solo modelo,
@@ -69,11 +74,11 @@ class InmuebleSerializer(serializers.Serializer):
 # En los ModelSerializer ya no es necesario los metodos create y update
 
 from rest_framework import serializers
-from inmuebleslist_app.models import Inmueble
+from inmuebleslist_app.models import Edificacion
 
-class InmuebleSerializer(serializers.ModelSerializer):
+class EdificacionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Inmueble
+        model = Edificacion
         # fields = "__all__" #esto es para mapear todos los campos, ya no habria necesidad de especificar todos
         # exclude = ['id'] # mapea todos los campos excepto los que vamos a excluir
         fields = ['id', 'direccion', 'pais', 'descripcion', 'imagen', 'active']
